@@ -14,8 +14,10 @@ Dessa forma, cada opção terá as seguintes features:
 - **Israel de Melo Pedrosa** - Fullstack developer
 - **Rodrigo Reis de Sá Guimarães Cabral** - Fullstack developer 
 - **Thiago de Assis Lima** - Fullstack developer
+- **Bernardo Alves Costa Pereira** - Fullstack developer
   
 ## Tecnologias
   HTML
+  CSS
   SQLite
   Python (_Flask_)
