@@ -6,7 +6,8 @@ emprestimos e respectivos prazos de entrega.
 
 ## Membros da Equipe
 - **Israel de Melo Pedrosa** - Fullstack developer
- 
+- **Rodrigo Reis de Sá Guimarães Cabral** - Fullstack developer
+  
 ## Tecnologias
   HTML
   SQLite
