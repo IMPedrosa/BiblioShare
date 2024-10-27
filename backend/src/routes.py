@@ -11,7 +11,8 @@ def login():
 	if form.validate_on_submit():
 		username = form.username.data
 		password = form.password.data
-		if username == "admin" and password == "senha":
+		user = User.query.filter_by(username=username).first()
+		if user and user.verify_password(password):
 			flash('Login bem-sucedido!', 'success')
 			return redirect(url_for('home'))
 		else:
