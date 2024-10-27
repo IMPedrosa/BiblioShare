@@ -1,5 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from forms import LoginForm, SignupForm
+from models import User
+from app import db
 
 auth = Blueprint('auth', __name__)
 
@@ -18,14 +20,14 @@ def login():
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
-	form = SignupForm()
-	if form.validate_on_submit():
-		username = form.username.data
-		password = form.password.data
-		# new_user = User(username=username, password=password)
-		# db.session.add(new_user)
-		# db.session.commit()
-		flash('Conta criada com sucesso!', 'success')
-		return redirect(url_for('auth.login')) # Redireciona para a página de login (você pode criar essa rota)
-	return render_template('signup.html', form=form)
+    form = SignupForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        new_user = User(username=username, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Conta criada com sucesso!', 'success')
+        return redirect(url_for('auth.login'))
+    return render_template('signup.html', form=form)
 
