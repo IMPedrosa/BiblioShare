@@ -5,6 +5,10 @@ from app import db
 
 auth = Blueprint('auth', __name__)
 
+@auth.route('/')
+def index():
+  return redirect(url_for('auth.login'))
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
 	form = LoginForm()
