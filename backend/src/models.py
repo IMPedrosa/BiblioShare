@@ -15,4 +15,6 @@ class Book(db.Model):
     publication_year = db.Column(db.Integer, nullable=False)
     genre = db.Column(db.String(100), nullable=False)
     details = db.Column(db.Text, nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    borrower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    is_available = db.Column(db.Boolean, nullable=False, default=True)
