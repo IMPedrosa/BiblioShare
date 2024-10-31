@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from forms import LoginForm, SignupForm
-from models import User
+from models import User, Book
 from app import db
 from flask import session
 
@@ -52,7 +52,7 @@ def logout():
 	session.pop('user_id', None)
 	return redirect(url_for('auth.login'))
 
-@auth.route('/register_book', methods=['GET', 'POST'])
+@auth.route('/register-book', methods=['GET', 'POST'])
 def cadastrar_livro():
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
