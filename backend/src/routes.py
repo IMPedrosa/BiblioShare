@@ -51,3 +51,20 @@ def logout():
 	session.pop('username', None)
 	session.pop('user_id', None)
 	return redirect(url_for('auth.login'))
+
+@auth.route('/register_book', methods=['GET', 'POST'])
+def cadastrar_livro():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        title = request.form['titulo']
+        author = request.form['autor']
+        publication_year = request.form['ano_publicacao']
+        genre = request.form['genero']
+        description = request.form['descricao']
+        new_book = Book(title=title, author=author, publication_year=publication_year, genre=genre, details=description, owner_id=session['user_id'])
+        db.session.add(new_book)
+        db.session.commit()
+        flash('Livro cadastrado com sucesso!', 'success')
+        return redirect(url_for('auth.home'))
+    return render_template('book-registration.html')
