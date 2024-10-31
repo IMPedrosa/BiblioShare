@@ -68,3 +68,29 @@ def cadastrar_livro():
         flash('Livro cadastrado com sucesso!', 'success')
         return redirect(url_for('auth.home'))
     return render_template('book-registration.html')
+
+@auth.route('/edit-book/<int:book_id>', methods=['GET', 'POST'])
+def editar_livro(book_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    book = Book.query.get_or_404(book_id)
+    if request.method == 'POST':
+        book.title = request.form['titulo']
+        book.author = request.form['autor']
+        book.publication_year = request.form['ano_publicacao']
+        book.genre = request.form['genero']
+        book.details = request.form['descricao']
+        db.session.commit()
+        flash('Livro atualizado com sucesso!', 'success')
+        return redirect(url_for('auth.home'))
+    return render_template('book-registration.html', book=book)
+
+@auth.route('/delete-book/<int:book_id>', methods=['POST'])
+def deletar_livro(book_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    book = Book.query.get_or_404(book_id)
+    db.session.delete(book)
+    db.session.commit()
+    flash('Livro deletado com sucesso!', 'success')
+    return redirect(url_for('auth.home'))
