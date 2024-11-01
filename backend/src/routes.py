@@ -94,3 +94,24 @@ def deletar_livro(book_id):
     db.session.commit()
     flash('Livro deletado com sucesso!', 'success')
     return redirect(url_for('auth.home'))
+
+@auth.route('/search-books', methods=['GET', 'POST'])
+def buscar_livros():
+    filters = []
+    if request.method == 'POST':
+        title = request.form.get('titulo')
+        author = request.form.get('autor')
+        genre = request.form.get('genero')
+        is_available = request.form.get('disponivel')
+
+        if title:
+            filters.append(Book.title.ilike(f'%{title}%'))
+        if author:
+            filters.append(Book.author.ilike(f'%{author}%'))
+        if genre:
+            filters.append(Book.genre.ilike(f'%{genre}%'))
+        if is_available == 'on':
+            filters.append(Book.is_available.is_(True))
+
+    books = Book.query.filter(*filters).all()
+    return render_template('search-books.html', books=books)
