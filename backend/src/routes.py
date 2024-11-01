@@ -95,6 +95,23 @@ def deletar_livro(book_id):
     flash('Livro deletado com sucesso!', 'success')
     return redirect(url_for('auth.home'))
 
+@auth.route('/toggle-availability/<int:book_id>', methods=['POST'])
+def alternar_disponibilidade(book_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    book = Book.query.get_or_404(book_id)
+
+    if book.borrower_id is not None:
+        flash('Este livro está emprestado e não pode ser disponibilizado no momento.', 'danger')
+        return redirect(url_for('auth.home'))
+    
+    book.is_available = not book.is_available
+    db.session.commit()
+
+    flash('Disponibilidade do livro atualizada com sucesso!', 'success')
+    return redirect(url_for('auth.home'))
+
 @auth.route('/search-books', methods=['GET', 'POST'])
 def buscar_livros():
     filters = []
@@ -115,3 +132,4 @@ def buscar_livros():
 
     books = Book.query.filter(*filters).all()
     return render_template('search-books.html', books=books)
+
