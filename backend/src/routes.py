@@ -134,7 +134,7 @@ def buscar_livros():
     return render_template('search-books.html', books=books)
 
 @auth.route('/my-books', methods=['GET'])
-def my_books():
+def meus_livros():
 	if 'user_id' not in session:
 		return redirect(url_for('auth.login'))
 	
