@@ -133,3 +133,12 @@ def buscar_livros():
     books = Book.query.filter(*filters).all()
     return render_template('search-books.html', books=books)
 
+@auth.route('/my-books', methods=['GET'])
+def my_books():
+	if 'user_id' not in session:
+		return redirect(url_for('auth.login'))
+	
+	user_id = session['user_id']
+	books = Book.query.filter_by(owner_id=user_id).all()
+	
+	return render_template('my-books.html', books=books)
