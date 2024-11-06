@@ -142,3 +142,21 @@ def meus_livros():
 	books = Book.query.filter_by(owner_id=user_id).all()
 	
 	return render_template('my-books.html', books=books)
+
+@auth.route('/borrow-book/<int:book_id>', methods=['POST'])
+def pegar_emprestado(book_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    book = Book.query.get_or_404(book_id)
+    
+    if not book.is_available:
+        flash('Este livro não está disponível para empréstimo.', 'danger')
+        return redirect(url_for('auth.buscar_livros'))
+    
+    book.is_available = False
+    book.borrower_id = session['user_id']
+    db.session.commit()
+    
+    flash('Livro emprestado com sucesso!', 'success')
+    return redirect(url_for('auth.buscar_livros'))
