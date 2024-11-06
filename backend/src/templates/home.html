@@ -45,7 +45,7 @@
             gap: 20px;
         }
         button {
-            background-color: #5bc0de;
+            background-color: #f0ad4e; 
             color: white;
             border: none;
             padding: 15px 25px;
@@ -55,7 +55,7 @@
             transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #31b0d5;
+            background-color: #ec971f; 
         }
         @media (max-width: 600px) {
             h1 {
@@ -72,7 +72,7 @@
     <div class="header">
         <button onclick="location.href='/logout'">Logout</button>
     </div>
-    <h1>Bem-vindo ao BiblioShare!</h1>
+    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
     <div class="container">
         <button onclick="location.href='/my-books'">Ver meus livros</button>
         <button onclick="location.href='/search-books'">Pegar livro emprestado</button>
