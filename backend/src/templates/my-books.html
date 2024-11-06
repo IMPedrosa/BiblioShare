@@ -76,12 +76,25 @@
       cursor: pointer;
     }
 
+    .btn-return {
+      padding: 6px 12px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
     .btn-edit:hover {
       background-color: #e0a800;
     }
 
     .btn-delete:hover {
       background-color: #c82333;
+    }
+
+    .btn-return:hover {
+      background-color: #218838;
     }
   
     .header {
@@ -113,7 +126,7 @@
   </div>
 
   <div class="container">
-    <h2>Lista de Livros</h2>
+    <h2>Meus Livros Cadastrados</h2>
     <table>
       <thead>
         <tr>
@@ -145,6 +158,40 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
+
+  <div class="container">
+    <h2>Livros Emprestados</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Ano de Publicação</th>
+            <th>Gênero</th>
+            <th>Descrição</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for book in borrowed_books %}
+          <tr>
+            <td>{{ book.id }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.publication_year }}</td>
+            <td>{{ book.genre }}</td>
+            <td>{{ book.details }}</td>
+            <td class="action-btns">
+              <form action="{{ url_for('auth.devolver_livro', book_id=book.id) }}" method="POST">
+                <button type="submit" class="btn-return">Devolver</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
   </div>
 
   <script>

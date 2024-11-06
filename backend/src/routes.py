@@ -114,7 +114,12 @@ def alternar_disponibilidade(book_id):
 
 @auth.route('/search-books', methods=['GET', 'POST'])
 def buscar_livros():
-    filters = []
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    user_id = session['user_id']
+    filters = [Book.owner_id != user_id]
+
     if request.method == 'POST':
         title = request.form.get('titulo')
         author = request.form.get('autor')
@@ -135,13 +140,14 @@ def buscar_livros():
 
 @auth.route('/my-books', methods=['GET'])
 def meus_livros():
-	if 'user_id' not in session:
-		return redirect(url_for('auth.login'))
-	
-	user_id = session['user_id']
-	books = Book.query.filter_by(owner_id=user_id).all()
-	
-	return render_template('my-books.html', books=books)
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    user_id = session['user_id']
+    owned_books = Book.query.filter_by(owner_id=user_id).all()
+    borrowed_books = Book.query.filter_by(borrower_id=user_id).all()
+    
+    return render_template('my-books.html', owned_books=owned_books, borrowed_books=borrowed_books)
 
 @auth.route('/borrow-book/<int:book_id>', methods=['POST'])
 def pegar_emprestado(book_id):
@@ -160,3 +166,21 @@ def pegar_emprestado(book_id):
     
     flash('Livro emprestado com sucesso!', 'success')
     return redirect(url_for('auth.buscar_livros'))
+
+@auth.route('/return-book/<int:book_id>', methods=['POST'])
+def devolver_livro(book_id):
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    book = Book.query.get_or_404(book_id)
+    
+    if book.borrower_id != session['user_id']:
+        flash('Você não tem permissão para devolver este livro.', 'danger')
+        return redirect(url_for('auth.meus_livros'))
+    
+    book.is_available = True
+    book.borrower_id = None
+    db.session.commit()
+    
+    flash('Livro devolvido com sucesso!', 'success')
+    return redirect(url_for('auth.meus_livros'))
