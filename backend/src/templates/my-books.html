@@ -83,10 +83,35 @@
     .btn-delete:hover {
       background-color: #c82333;
     }
+  
+    .header {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .header button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .header button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 
 <body>
+  <div class="header">
+    <button onclick="location.href='/home'">Voltar para Home</button>
+  </div>
+
   <div class="container">
     <h2>Lista de Livros</h2>
     <table>
