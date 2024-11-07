@@ -128,26 +128,29 @@ def buscar_livros():
     filters = [Book.owner_id != user_id]
     filters.append(Book.is_available.is_(True))
 
-    title, author, genre, is_available = "", "", "", "on"
+    title, author, genre_input, is_available = "", "", "", "on"
+
     if request.method == 'POST':
         title = request.form.get('titulo')
         author = request.form.get('autor')
-        genre = request.form.get('genero')
+        genre_input = request.form.get('genero')
         is_available = request.form.get('disponibilidade')
 
         if title:
             filters.append(Book.title.ilike(f'%{title}%'))
         if author:
             filters.append(Book.author.ilike(f'%{author}%'))
-        if genre:
-            filters.append(Book.genre.ilike(f'%{genre}%'))
-        if is_available == 'off':
-            filters.append(Book.is_available.is_(False))
-        else:
+        if genre_input:
+            genre_list = [genre.strip() for genre in genre_input.split(',')]
+            for genre in genre_list:
+                filters.append(Book.genre.ilike(f'%{genre}%'))
+        if is_available == 'on':
             filters.append(Book.is_available.is_(True))
+        else:
+            filters.append(Book.is_available.is_(False))
 
     books = Book.query.filter(*filters).all()
-    return render_template('search-books.html', books=books, title=title, author=author, genre=genre, is_available=is_available)
+    return render_template('search-books.html', books=books, title=title, author=author, genre=genre_input, is_available=is_available)
 
 @auth.route('/my-books', methods=['GET'])
 def meus_livros():
