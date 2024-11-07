@@ -82,7 +82,7 @@ def editar_livro(book_id):
         book.details = request.form['descricao']
         db.session.commit()
         flash('Livro atualizado com sucesso!', 'success')
-        return redirect(url_for('auth.home'))
+        return redirect(url_for('auth.meus_livros'))
     return render_template('book-registration.html', book=book)
 
 @auth.route('/delete-book/<int:book_id>', methods=['POST'])
@@ -93,7 +93,7 @@ def deletar_livro(book_id):
     db.session.delete(book)
     db.session.commit()
     flash('Livro deletado com sucesso!', 'success')
-    return redirect(url_for('auth.home'))
+    return redirect(url_for('auth.meus_livros'))
 
 @auth.route('/toggle-availability/<int:book_id>', methods=['POST'])
 def alternar_disponibilidade(book_id):
@@ -110,8 +110,8 @@ def alternar_disponibilidade(book_id):
     db.session.commit()
 
     flash('Disponibilidade do livro atualizada com sucesso!', 'success')
-    return redirect(url_for('auth.home'))
-
+    return meus_livros()
+    
 @auth.route('/search-books', methods=['GET', 'POST'])
 def buscar_livros():
     if 'user_id' not in session:

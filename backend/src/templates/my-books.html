@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Livros</title>
   <style>
+    
     * {
       margin: 0;
       padding: 0;
@@ -149,7 +149,14 @@
           <td>{{ book.publication_year }}</td>
           <td>{{ book.genre }}</td>
           <td>{{ book.details }}</td>
-          <td>{{ 'Sim' if book.is_available else 'Não' }}</td>
+          <td>
+            {{ 'Sim' if book.is_available else 'Não' }}
+            <form action="{{ url_for('auth.alternar_disponibilidade', book_id=book.id) }}" method="POST" style="display:inline;">
+              <button type="submit" class="btn-edit">
+                {{ 'Tornar Indisponível' if book.is_available else 'Tornar Disponível' }}
+              </button>
+            </form>
+          </td>
           <td class="action-btns">
             <button class="btn-edit" onclick="editBook({{ book.id }})">Editar</button>
             <button class="btn-delete" onclick="deleteBook({{ book.id }})">Deletar</button>
@@ -159,7 +166,6 @@
       </tbody>
     </table>
   </div>
-
   <div class="container">
     <h2>Livros Emprestados</h2>
       <table>
@@ -196,13 +202,11 @@
 
   <script>
     function editBook(id) {
-      // Redirecionar para a página de edição com o ID do livro
       window.location.href = `/edit-book/${id}`;
     }
 
     function deleteBook(id) {
       if (confirm("Tem certeza que deseja deletar este livro?")) {
-        // Fazer a requisição de exclusão (Exemplo com fetch)
         fetch(`/delete-book/${id}`, { method: 'POST' })
           .then(response => {
             if (response.ok) {
