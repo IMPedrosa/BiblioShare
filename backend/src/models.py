@@ -21,3 +21,12 @@ class Book(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     borrower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     is_available = db.Column(db.Boolean, nullable=False, default=True)
+
+class History(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
+    borrower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    borrow_date = db.Column(db.DateTime, nullable=False)
+    return_date = db.Column(db.DateTime, nullable=True)
+    returned = db.Column(db.Boolean, nullable=False, default=False)

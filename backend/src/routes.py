@@ -1,8 +1,10 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
 from forms import LoginForm, SignupForm
-from models import User, Book
+from models import User, Book, History
 from app import db
 from flask import session
+from datetime import datetime
+from collections import Counter
 
 auth = Blueprint('auth', __name__)
 
@@ -166,6 +168,18 @@ def pegar_emprestado(book_id):
     
     book.is_available = False
     book.borrower_id = session['user_id']
+    owner_id = book.owner_id
+    db.session.commit()
+
+    history = History(
+        book_id=book.id,
+        borrower_id=session['user_id'],
+        owner_id=owner_id,
+        borrow_date=datetime.utcnow(),
+        return_date=None,
+        returned=False
+    )
+    db.session.add(history)
     db.session.commit()
     
     flash('Livro emprestado com sucesso!', 'success')
@@ -185,6 +199,52 @@ def devolver_livro(book_id):
     book.is_available = True
     book.borrower_id = None
     db.session.commit()
-    
+
+    history = History.query.filter_by(book_id=book.id, borrower_id=session['user_id'], returned=False).first()
+    if history:
+        history.return_date = datetime.utcnow()
+        history.returned = True
+        db.session.commit()
+
     flash('Livro devolvido com sucesso!', 'success')
     return redirect(url_for('auth.meus_livros'))
+
+@auth.route('/user-statistics', methods=['GET',  'POST'])
+def estatisticas_usuario():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+
+    user_id = session['user_id']
+    
+    total_books = Book.query.filter_by(owner_id=user_id).count()
+
+    total_borrowed_books = History.query.filter_by(owner_id=user_id).count()
+
+    total_books_borrowed = History.query.filter_by(borrower_id=user_id).count()
+
+    borrowed_books_by_month = db.session.query(
+        db.func.extract('year', History.borrow_date).label('year'),
+        db.func.extract('month', History.borrow_date).label('month'),
+        db.func.count(History.id).label('count')
+    ).filter(
+        History.borrower_id == user_id
+    ).group_by('year', 'month').all()
+
+    borrowed_books_by_month = [(int(year), int(month), count) for year, month, count in borrowed_books_by_month]
+
+    borrowed_books_taken_by_month = db.session.query(
+        db.func.extract('year', History.borrow_date).label('year'),
+        db.func.extract('month', History.borrow_date).label('month'),
+        db.func.count(History.id).label('count')
+    ).filter(
+        History.borrower_id == user_id
+    ).group_by('year', 'month').all()
+
+    borrowed_books_taken_by_month = [(int(year), int(month), count) for year, month, count in borrowed_books_taken_by_month]
+
+    return render_template('user-statistics.html', 
+        total_books=total_books, 
+        total_borrowed_books=total_borrowed_books,
+        total_books_borrowed=total_books_borrowed,
+        borrowed_books_by_month=borrowed_books_by_month,
+        borrowed_books_taken_by_month=borrowed_books_taken_by_month)
