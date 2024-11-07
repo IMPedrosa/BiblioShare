@@ -29,6 +29,7 @@ def login():
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
+    from app import db
     form = SignupForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -54,6 +55,7 @@ def logout():
 
 @auth.route('/register-book', methods=['GET', 'POST'])
 def cadastrar_livro():
+    from app import db
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     if request.method == 'POST':
@@ -71,6 +73,7 @@ def cadastrar_livro():
 
 @auth.route('/edit-book/<int:book_id>', methods=['GET', 'POST'])
 def editar_livro(book_id):
+    from app import db
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     book = Book.query.get_or_404(book_id)
@@ -87,6 +90,7 @@ def editar_livro(book_id):
 
 @auth.route('/delete-book/<int:book_id>', methods=['POST'])
 def deletar_livro(book_id):
+    from app import db
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     book = Book.query.get_or_404(book_id)
@@ -97,6 +101,7 @@ def deletar_livro(book_id):
 
 @auth.route('/toggle-availability/<int:book_id>', methods=['POST'])
 def alternar_disponibilidade(book_id):
+    from app import db
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
@@ -155,6 +160,7 @@ def meus_livros():
 
 @auth.route('/borrow-book/<int:book_id>', methods=['POST'])
 def pegar_emprestado(book_id):
+    from app import db
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
@@ -173,6 +179,7 @@ def pegar_emprestado(book_id):
 
 @auth.route('/return-book/<int:book_id>', methods=['POST'])
 def devolver_livro(book_id):
+    from app import db
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
