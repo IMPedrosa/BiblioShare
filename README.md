@@ -61,3 +61,8 @@ Dessa forma, cada opção terá as seguintes features:
 - Implementar os filtros de busca de livros no backend (Flask) - [Rodrigo]
 - Criar a lógica de pegar livros emprestados no backend - [Thiago]
 - Integrar a busca e os filtros com o backend - [Bernardo]
+
+## Diagrama de Atividades
+  <p align="center">
+   <img src="FlowUML.png">
+  </p>
