@@ -66,3 +66,8 @@ Dessa forma, cada opção terá as seguintes features:
   <p align="center">
    <img src="FlowUML.png">
   </p>
+
+## Diagrama de Classes
+  <p align="center">
+   <img src="ClassUML.png">
+  </p>
