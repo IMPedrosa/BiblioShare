@@ -126,9 +126,9 @@ def buscar_livros():
     
     user_id = session['user_id']
     filters = [Book.owner_id != user_id]
+    filters.append(Book.is_available.is_(True))
 
     title, author, genre, is_available = "", "", "", "on"
-
     if request.method == 'POST':
         title = request.form.get('titulo')
         author = request.form.get('autor')
@@ -141,10 +141,10 @@ def buscar_livros():
             filters.append(Book.author.ilike(f'%{author}%'))
         if genre:
             filters.append(Book.genre.ilike(f'%{genre}%'))
-        if is_available == 'on':
-            filters.append(Book.is_available.is_(True))
-        else:
+        if is_available == 'off':
             filters.append(Book.is_available.is_(False))
+        else:
+            filters.append(Book.is_available.is_(True))
 
     books = Book.query.filter(*filters).all()
     return render_template('search-books.html', books=books, title=title, author=author, genre=genre, is_available=is_available)
@@ -235,7 +235,7 @@ def estatisticas_usuario():
         db.func.extract('month', History.borrow_date).label('month'),
         db.func.count(History.id).label('count')
     ).filter(
-        History.borrower_id == user_id
+        History.owner_id == user_id
     ).group_by('year', 'month').all()
 
     borrowed_books_by_month = [(int(year), int(month), count) for year, month, count in borrowed_books_by_month]
