@@ -66,7 +66,7 @@ def cadastrar_livro():
         db.session.add(new_book)
         db.session.commit()
         flash('Livro cadastrado com sucesso!', 'success')
-        return redirect(url_for('auth.home'))
+        return redirect(url_for('auth.meus_livros'))
     return render_template('book-registration.html')
 
 @auth.route('/edit-book/<int:book_id>', methods=['GET', 'POST'])
@@ -120,11 +120,13 @@ def buscar_livros():
     user_id = session['user_id']
     filters = [Book.owner_id != user_id]
 
+    title, author, genre, is_available = "", "", "", "on"
+
     if request.method == 'POST':
         title = request.form.get('titulo')
         author = request.form.get('autor')
         genre = request.form.get('genero')
-        is_available = request.form.get('disponivel')
+        is_available = request.form.get('disponibilidade')
 
         if title:
             filters.append(Book.title.ilike(f'%{title}%'))
@@ -134,9 +136,11 @@ def buscar_livros():
             filters.append(Book.genre.ilike(f'%{genre}%'))
         if is_available == 'on':
             filters.append(Book.is_available.is_(True))
+        else:
+            filters.append(Book.is_available.is_(False))
 
     books = Book.query.filter(*filters).all()
-    return render_template('search-books.html', books=books)
+    return render_template('search-books.html', books=books, title=title, author=author, genre=genre, is_available=is_available)
 
 @auth.route('/my-books', methods=['GET'])
 def meus_livros():
