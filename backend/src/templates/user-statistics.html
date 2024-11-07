@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estatísticas do Usuário</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    section {
+      margin-bottom: 30px;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .stats-box {
+      background-color: #ec971f;
+      padding: 20px;
+      color: black;
+      border-radius: 8px;
+      width: 30%;
+      text-align: center;
+    }
+
+    .header {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .header button {
+      background-color: #007BFF;
+      color: black;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .header button:hover {
+      background-color: #0056b3;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 400px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <button onclick="location.href='/home'">Voltar para Home</button>
+  </div>
+
+  <div class="container">
+    <h1>Estatísticas do Usuário</h1>
+
+    <section>
+      <div class="stats-container">
+        <div class="stats-box">
+          <h2>Total de Livros Cadastrados</h2>
+          <p>{{ total_books }}</p>
+        </div>
+        <div class="stats-box">
+          <h2>Total de Livros Emprestados</h2>
+          <p>{{ total_borrowed_books }}</p>
+        </div>
+        <div class="stats-box">
+          <h2>Total de Livros Pegos Emprestados</h2>
+          <p>{{ total_books_borrowed }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Livros Emprestados por Mês (2024)</h2>
+      <canvas id="borrowedBooksChart"></canvas>
+      <script>
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+       
+        var borrowedBooksData = {{ borrowed_books_by_month | tojson }};
+        
+        var borrowedBooksValues = monthNames.map((item,index) => {
+         const data = borrowedBooksData.find(item => item[1] - 1 === index);
+         return data ? data[2] : 0
+        });
+
+        var ctx = document.getElementById('borrowedBooksChart').getContext('2d');
+        var borrowedBooksChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: monthNames,
+            datasets: [{
+              label: 'Livros Emprestados por Mês (2024)',
+              data: borrowedBooksValues,
+              borderColor: 'rgba(75, 192, 192, 1)',
+              fill: false
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                ticks: {
+                  beginAtZero: true,
+                  precision: 0,
+                  stepSize: 1
+                },
+                suggestedMin: 0,
+                suggestedMax: Math.max(...borrowedBooksValues) + 1,
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Mês'
+                }
+              }
+            }
+          }
+        });
+      </script>
+    </section>
+
+    <!-- Gráfico de livros pegos emprestados por mês -->
+    <section>
+      <h2>Livros Pegos Emprestados por Mês (2024)</h2>
+      <canvas id="borrowedBooksTakenChart"></canvas>
+      <script>
+        var borrowedBooksTakenData = {{ borrowed_books_taken_by_month | tojson }};
+        
+        var borrowedBooksTakenValues = monthNames.map((item,index) => {
+         const data = borrowedBooksTakenData.find(item => item[1] - 1 === index);
+         return data ? data[2] : 0
+        });
+
+        var ctx2 = document.getElementById('borrowedBooksTakenChart').getContext('2d');
+        var borrowedBooksTakenChart = new Chart(ctx2, {
+          type: 'line',
+          data: {
+            labels: monthNames,
+            datasets: [{
+              label: 'Livros Pegos Emprestados por Mês (2024)',
+              data: borrowedBooksTakenValues,
+              borderColor: 'rgba(153, 102, 255, 1)',
+              fill: false
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                ticks: {
+                  beginAtZero: true,
+                  precision: 0,
+                  stepSize: 1
+                },
+                suggestedMin: 0,
+                suggestedMax: Math.max(...borrowedBooksTakenValues) + 1,
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Mês'
+                }
+              }
+            }
+          }
+        });
+      </script>
+    </section>
+  </div>
+</body>
+
+</html>
