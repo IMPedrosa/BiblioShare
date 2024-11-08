@@ -64,10 +64,10 @@ Dessa forma, cada opção terá as seguintes features:
 
 ## Diagrama de Atividades
   <p align="center">
-   <img src="FlowUML.png">
+   <img src="FlowUML.png?">
   </p>
 
 ## Diagrama de Classes
   <p align="center">
-   <img src="ClassUML.png">
+   <img src="ClassUML.png?">
   </p>
